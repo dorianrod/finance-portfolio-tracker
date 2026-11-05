@@ -1,0 +1,63 @@
+{
+  "formulaVersion": "weighted-rule-compliance/v1",
+  "scope": "dashboard/full-react-2026-11-05",
+  "weights": {
+    "CRITICAL": 32,
+    "HIGH": 16,
+    "MEDIUM-HIGH": 8,
+    "MEDIUM": 4,
+    "LOW-MEDIUM": 2,
+    "LOW": 1
+  },
+  "formula": "100 * (1 - openViolatedRuleWeight / applicableRuleWeight)",
+  "score": 98.24,
+  "scoreStatus": "calculated",
+  "applicableRuleWeight": 1136,
+  "openViolatedRuleWeight": 20,
+  "openViolatedRuleIds": ["i18n-static-keys", "yup-last-coercion-barrier"],
+  "coverage": {
+    "selected": 110,
+    "applicable": 100,
+    "pending": []
+  },
+  "unreviewedExceptions": 1,
+  "assurance": "reviewed scope excluding unrevalidated exceptions",
+  "volumes": {
+    "CRITICAL": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "HIGH": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "MEDIUM-HIGH": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "MEDIUM": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "LOW-MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    }
+  },
+  "otherOpenFindings": {
+    "ambiguity": 0,
+    "prevention-gap": 1,
+    "suggestion": 0
+  },
+  "openAffectedFiles": 2
+}

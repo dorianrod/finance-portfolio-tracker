@@ -1,0 +1,772 @@
+[
+  {
+    "id": "api-business-destructuring",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Typed API result consumer lint plus manual scope/history/performance source reads use business data aliases; status-only observer arrays preserve result objects.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-central-url-constants",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All application endpoints reside in portfolio/shared/apis/endpoints.ts; shared CSV loader accepts registry URLs. Literal worker module URL is a bundler asset, not a backend endpoint.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-error-message-helper",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "HttpError/readJsonResponse preserve backend messages/status; normalizeRequestError classifies syntax/schema/network/timeout/403/404, and useFormatErrorMessage translates known codes. Boundaries and inline query error surfaces consume normalized text.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-mutation-three-types",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No TanStack mutations or state-changing backend endpoint; read-only POST endpoints calculate history/IRR and use query hooks.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-naming",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Endpoint query hooks use intent-named useGet...Query paths; cached-only observers explicitly name their cached-source concern. Query options and transport helpers are not hooks.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-optimistic-update",
+    "impact": "MEDIUM",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No mutations or optimistic cache writes; no visible-latency write workflow.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-query-hook-choice",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Required reads batch with useSuspenseQueries; changing-account/date queries use keepPreviousData. Position history retains one index key and uses select for ISIN. Asset IRR and history status helpers distinguish placeholder data from selected-scope results.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-return-result-as-is",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Query wrappers return TanStack results unchanged; schema/select owns transport/domain mapping. Cached observers use skipToken rather than reshaping a response into status-less data.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-suspense-error-boundary",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "DashboardSources catches required-source throws while persistent shell reads the same cache; panel boundaries isolate lazy/render failures. Optional CSV 404 yields empty source; required 404 maps to missing-data instead of generic crash.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-typed-entity-generic",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Query data types come from canonical domain types or typed queryFn/schema outputs. Hook return inference is retained; no broad inline response assertion.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-use-transformation",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All network entry families enumerated: CSV sources use Yup parse/read schema boundary; JSON history and asset IRR validate requests and responses. DEBUG=false deliberately keeps cast/conversion while skipping CSV tests; existing operating-mode policy preserved.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-vercel-parallel-work",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Required CSV groups, fund sources, diagnostic requests and sibling Suspense consumers start independent work together. Query-client reuse is an actual data prerequisite; no speculative writes exist.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-void-mutation",
+    "impact": "MEDIUM",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No mutation endpoints or empty-body mutation workflow.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "api-wrap-in-domain-hooks",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Domain query options own CSV requests; domain hooks own queries/selectors and cached-source observers. App uses domain hooks, never raw endpoint/query calls. Common source batching is the existing documented owner.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-business-capability-boundaries",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Capability map is README ownership table: select scope; compare overview; explain wealth; assess performance; inspect allocations/concentration; inspect positions/look-through; assess/inspect source quality. Hierarchy reflects outcomes rather than implementation buckets.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-component-complexity",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No active complexity/size diagnostics. Substantial JSX candidates individually reviewed: shell/page feature composition, account choice workflow, allocation chart composition. Existing independent chart/table views retained; element count alone does not mandate splitting.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-component-module-boundaries",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Feature modules inspected including their private components; named external column renderers remain module-scoped. No module-level lowercase component support callable reported. Small event adapters delegate to imported helpers/actions.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-component-roles",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "105 feature modules: individual responsibility/boundary decisions in component-review.json; both state renderers consume externally resolved unions and exhaustively return never. Views checked through resolved runtime dependencies and presentation patterns.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-decompose-hook-heavy-components",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Configured hook thresholds pass. App, DataQualityTab, PerformanceTab, WealthTab and AccountTreeSelect responsibility reviews preserve source/status, page orchestration and direct selection responsibilities; existing visual contracts are already extracted.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-domain-first-layout",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Portfolio owns seven distinct user outcomes in README; source roles live under their owning leaf or shared ancestor. No root catch-all hooks/components/helpers/types. Alias and parent/leaf checks calibrated by architecture integration cases.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-feature-flags",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No experimental or unfinished capability found. DEBUG validation and STATIC_DEMO are build/runtime operating modes, not experimental-feature gates.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-feature-hierarchy",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Allocation/concentration, positions/fund-look-through, assessment/errors are peer responsibilities under meaningful parent scopes. Current/history, chart modes and dimensions remain variants. Folder-depth and sibling dependency guards pass.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-feature-slice-layout",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Scope-selection/overview/wealth/performance are leaves. Holdings, diversification and data-quality each own two peer capabilities; parent roles are under shared. Application owns cross-capability composition.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-helpers-vs-services",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Acquisition remains API/service-owned; callback/memo-only typed derivation in categorized helpers. Reviewed pure account-label source identity, chart metrics, quality diagnostics and worker boundary. No service rename solely to silence a metric.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-isolate-effects-in-hooks",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All direct production effect sites enumerated: theme synchronization, overlay portal, viewport, indeterminate input, delayed dismissal, preview focus, playback and cleanup hooks. Subscriptions/timers clean up; Effect Events remain effect/subscription-local.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-no-prop-drilling",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Feature data flows reviewed in all 105 module bodies, including table metadata, raw scope inputs and direct feature/view APIs; state consumers subscribe to focused Jotai atoms. No authored React Context. No forwarding rewrite warranted.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-no-visual-logic-below-page",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Reusable services acquire/read scoped data; pure transformers calculate diagnostics. Data-quality theme presentation and chart geometry remain component/page presenters. Direct/indirect display dependency guards pass.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-shared-no-domain-knowledge",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Global UI vocabulary scan finds no portfolio entities in primitive contracts; scoped shared source/history/filter contracts serve multiple capabilities. Source acquisition and shared-feature graph checked separately from import direction.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-stores-no-index",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All 30 concern-owned atom/store modules enumerated; no stores/index barrel. Consumer imports are direct and runtime graph is acyclic.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-subdomain-decision",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Single portfolio domain contains distinct capabilities of the same business concept; no distinct child business domain or forbidden sibling-domain coupling requires a new sub-domain.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-thin-components",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Mapped item delegates, JSX conditions and compound arithmetic checked by dedicated rules. Reviewed account-selection calculations, table grouping, performance contributions and chart preparation at their actual business/presentation owners.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "arch-transverse-only-imports",
+    "impact": "CRITICAL",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Only portfolio is a business domain; no transverse-domain allowlist was introduced. Resolved import-boundaries checks and synchronous graph have no forbidden edges or cycles.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "cache-invalidate-exactly",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No server mutations/invalidation workflow exists; source snapshots are intentionally cached for the dashboard session.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "cache-one-key-convention",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All keys use portfolioQueryKeys.data under portfolio/data/resource with normalized sorted account/date scopes. Indexed all-position reads share one source key instead of inventing per-item transport identities.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-business-rules-pure",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Eligibility, scoping, coverage, identity and concentration policies are transformer-owned; local simple render/visual conditions remain at their UI boundary. No query/store context in business predicates.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-categories",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Three categories only, matching callable exports. Inspected source labels vs display labels, technical month/control strings vs dates, quality diagnostics vs theme presentation, geometry vs monetary aggregation.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-formatter-hooks",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All 41 domain/shared formatter modules and their consumers inventoried: nullable input and configurable fallback, string results, memoized callbacks; numeric display profiles keep zero separate from absence. F-002 is a domain calculation that must preserve null before formatting.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-no-context-params",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Helpers receive data/configuration; formatter/presenter hooks acquire their own translation dependency. No injected t/navigate/store/query-client or formatter callback across helper APIs detected.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-vercel-immutable-collections",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No production sort/reverse/splice mutator calls. Reviewed map/set mutation accumulators in position history, fund status/index and chart geometry are fresh owned collections; functional state setters copy collections.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "helpers-vercel-indexed-lookups",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Fund statuses use first-source-order indexes; issuer canonicalization uses prefix index; historical fund snapshots and account scopes use maps/sets. Tiny selected-option and tooltip lookups do not need new global caches.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "i18n-interpolation",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Visible dynamic copy uses literal-key interpolation; list/number/date formatters own display text. No raw translated-string concatenation diagnostics; technical keys and separate label/value layout remain valid.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "i18n-no-default-value",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Configured alias-aware translation checks reject explicit/default-string fallbacks; bootstrap has no asynchronous catalog loader requiring feature defaults.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "i18n-no-hardcoded-strings",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Visible JSX and semantic labels checked; raw source names/messages and technical symbols are distinguished from product copy. en catalog is the only supported locale.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "i18n-static-keys",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "F-001: application catalog usage command reports five orphan keys; ui.app.loading is referenced only in detector example strings. Missing-key/static-key checks and aliases are independently calibrated.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-english-only",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Identifiers/comments/test names and authored copy are English; CSV wire-field vocabulary and raw source data are external contracts. No accented authored prose candidate found.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-eslint-disable-scoped",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "One existing PositionsTable incompatible-library directive has valid scope/date/rules metadata; unused-disable check passes. Its technical rationale is deliberately not reapproved. No new/modified suppression planned.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-eslint-warning-budget",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Baseline zero errors, one tracking warning; package ceiling is exactly one. Underlying suppressed diagnostic is counted separately, not as an additional active warning. CI uses package gate.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-formatting-and-sorting",
+    "impact": "LOW",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Committed Prettier policy and shared import/export sort are active; baseline authored-file check passes. Editor settings select same tools; source ordering and type imports have separate guards.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-jsdoc-minimal",
+    "impact": "LOW",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Code-local architecture decisions inventoried by file/ID, assumptions checked against current consumers; none reopened. Non-obvious source, ownership and scheduling rationale retained, no per-file paraphrase comments added.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-no-deprecated-apis",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Typed no-deprecated and installed signatures pass across application/tests/tooling. React 19 ref props, current query APIs and media-query addEventListener are used; dependency implementation is excluded.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-no-hook-factory",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No createUse... hook factory or hook-parameter orchestration found. useScopedInput takes values/atoms, not injected hooks.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-no-nested-ternary",
+    "impact": "LOW",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No active nested/negated conditional diagnostics; named business/visual predicates and positive simple ternaries retained.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-no-noop-link",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "ExternalLink renders invalid URLs as text; actual navigation/filter/details controls invoke actions. Empty callbacks are limited to infrastructure adapters and isolated stories/test doubles, not live user actions.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-public-api-first",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Callable exports precede implementation declarations, respecting imported/hoisted dependencies; actual config invalid/valid tests include late imports. Constant-only registries have no callable ordering obligation.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-single-public-export",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Production modules expose one public value; compound member attachment and associated erased types do not add top-level value exports. Test/story/config exceptions retain their documented scope.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-usecallback-for-functions",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Formatter/action return callbacks use useCallback; data models use useMemo. Source metrics and disclosure/loading have distinct invalidation boundaries; no compiler enabled and no arbitrary memo-count refactor.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "quality-vercel-ref-as-prop",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "React 19 ref-as-prop public contracts retained; shared composition handles callback cleanup and object refs. No authored forwardRef compatibility wrapper.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "security-authorized-file-access",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No bearer-protected file routes, object URLs, authenticated preview/download or credentials. Public source links and local CSV endpoints do not have that contract.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "security-clear-cache-on-logout",
+    "impact": "CRITICAL",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No login/logout/session/401-refresh user-switch path; local read-only dashboard has no authentication lifecycle.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "security-window-open-noopener",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Single production external link primitive validates http/https and sets target=_blank with noopener noreferrer. Malformed/unsupported schemes render text. No production window.open path.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-atom-naming",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Concern modules and exported Atom identifiers carry owning feature/entity vocabulary. No generic cross-feature filtersAtom/modalAtom exports.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-atom-with-storage",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Only dashboard theme persists, using versioned atomWithStorage key, validation, getOnInit and read/write/remove failure handling; synchronous bootstrap is intentional first-paint initialization, not a second effect-owned state copy.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-derived-atoms",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Derived counts, visible modes and filtered data are computed from inputs, not mirrored writable atoms synchronized by effects. Editable local UI state and explicit reset actions remain independent state.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-domain-vs-page-location",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Cross-capability filters/navigation at portfolio shared; holdings search at holdings shared; disclosure/sort at owning leaf; classification panel state at DataQualityTab. Generic primitive scopes stay in shared/ui.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-explicit-types-defaults",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Raw atom generics and named nontrivial defaults checked. Reset actions use typed defaults; primitive boolean inference exception is preserved.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-hook-variants",
+    "impact": "LOW",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Reads/writes use useAtomValue/useSetAtom; useAtom is retained where the same consumer reads and writes (horizon/navigation/playback). No churn to minor legacy owner-hook subscriptions.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-module-level-atoms",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All atom declarations are module-scoped. useScopedInput creates an isolated scope around stable module atoms, not a new atom identity per render.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-prefer-factories",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No established recurring domain list-state factory is bypassed. Concern-specific atoms have distinct protocols; existing generic useScopedInput is reused for primitive scopes rather than duplicated.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-server-state-in-react-query",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Source entities/status stay in Query cache and cached observers; domain atoms hold filters, navigation, IDs, disclosure and UI choices. Shared UI scoped inputs are primitive behavior state, not a second server cache.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "state-vercel-functional-updates",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Selection/filter/expanded actions derive new collections from current state via functional setters. No in-place mutation of atom/query collection input found in enumerated mutation sites.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-behavior-not-implementation",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "345 baseline test files pass. Conditional assertions and utility-style/private DOM assertions checked by dedicated rules; reviewed overlay cancellation, cache updates, source failures, nullable metrics and selected-scope behavior tests.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-colocated-tests",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Snapshot baseline frozen. Rule applies to newly introduced runtime contracts; legacy missing siblings are not retroactively called introduced. New regression test will colocate with the existing valuation owner; no new runtime owner/extraction planned.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-jotai-provider-isolation",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Stateful hook/component tests use per-test createStore/Provider; direct visual tests need no business provider. Shared UI scope state tests install isolation; no getDefaultStore use.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-mock-data",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "75 owning fixture modules use typed deterministic factories; 25 inline inventory decisions are scenario/config/transport inputs rather than baseline defaults. No live clocks/random values in fixtures; ledger gate is fresh. Changes require a reviewed fingerprint update.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-mock-network-not-internals",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No internal vi.mock/jest.mock calls. Spies target console, storage and DOM measurement boundaries; fetch/Worker/Observer stubs leave domain hooks/schemas real.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-renderhook",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Existing query-wrapper cases use fresh clients, retry=false and Suspense/error boundaries as needed. Request-helper tests independently exercise transport validation; accountScopes tests exercise changing-account hooks.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "test-semantic-queries",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Role/label/text queries and userEvent interactions; metadata/compiler/tool tests use non-DOM APIs. Existing focus/visibility event synthesis is infrastructure reproduction, not a substitute for user interactions.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-amounts-as-number",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Financial source/domain fields are numeric or justified nullable; UI text comes from money/percentage/number formatters, not string arithmetic.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-closed-values-not-string",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Logic-driving account category, operation, quality tier/validation status, navigation modes and union states are closed types. Source-owned names/URLs/descriptive metadata remain extensible strings; display error source/type formatters preserve unknown text.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-compose-transverse",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No foreign business domain; PositionRow composes RawPosition and chart/report contracts compose their owning entity fields. Shared generic contracts remain UI-independent.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-consume-entity",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Canonical types are imported across consumers; architectural support-contract candidates are local helper/chart/component contracts, not independent redefined domain entities.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-dates-as-date",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Canonical domain dates are Date or justified nullable Date. Month keys and technical chart coordinates are explicitly documented strings/numbers; calendarDate schemas validate/convert external dates and request schemas serialize them.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-entity-vs-response",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "RawPosition/RawOperation/RawHistory names represent validated numeric/Date domain source records, not lax JSON. JSON and CSV schema adaptation remains at the API boundary; PortfolioHistoryResponse contains parsed records.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-explicit-nullability",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Canonical type-field inventory read with explanatory comments: missing source metrics, unknown taxonomy metadata, absent comparable dates/returns and optional diagnostics are distinct. Optional native/library rendering props retain their external contract.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-file-per-entity",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "All 32 support-type candidates in the architecture inventory reviewed by owning function/callers. Signatures, chart payloads, local props and comparison sub-shapes remain local; canonical entity files follow singular naming.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-literal-unions-no-enum",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "No TypeScript enums in application code; closed values use union types and exhaustive records/switches. Compiler erasableSyntaxOnly complements lint.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-no-any-or-wide",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Strict app/tool/story projects and typed unsafe/promise/narrowing checks pass. Unknown remains at fetch/storage/errors and generic dependency boundaries. Existing deferred unchecked-index/exact-optional migration is not reopened.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "types-no-dead-record-fallback",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Typed closed-union lookups return exhaustive records; open source dictionaries use own-property/Map lookup with reachable fallback. Existing indexed-access migration policy retained.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-accessible-names",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Icon controls pass translated semantic labels; ChoiceRow labels checkboxes; dialogs/tabs/nav/plot groups own names. Overlay and chart viewport tests query roles and focus behavior. Backend/raw entity labels remain supplied data.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-centralize-accessibility",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "ControlProps strips raw ARIA/focus/keyboard APIs. Shared native/Radix wrappers own label associations, caller-first cancelable events, refs, focus restoration, Tab exit/trapping and retained-panel portal cleanup; executable sequence tests inspected.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-compound-slots-direct-children",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "partitionSlot explicitly scans direct children. DataQualityTab, SidePanel, Donut/Evo cards, overview cards and KPI slot call sites retain direct slots, with wrappers inside slot content. Radix context-based Tabs supports nested structure.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-delegate-mapped-jsx",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Mapped JSX uses named module-level item components; account/type groups, table rows, chart labels and quality dimensions inspected. Data-only map transformations are not forced into components.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-dialog-controlled",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Filter, allocation-detail, diagnostic and affected-asset SidePanels remain mounted with boolean open; Radix portals own content lifecycle. Preview optional content is a separate nonmodal popover protocol, not a conditionally mounted hardcoded-open dialog.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-form-wraps-dialog",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No form-bearing submit dialog or form provider workflow.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-name-compound-render-conditions",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Named JSX gates and boolean operands checked; narrow optional fragments and single comparisons retained. Primary page candidate bodies inspected beyond syntax thresholds.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-no-adhoc-styling",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Application/domain markup owns external layout only; shared primitives own appearance/internal spacing. Typed styling and child-layout guards calibrated with invalid/valid cases. CSS theme tokens reviewed as design-system implementation.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-no-classname-on-shared-ui",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Shared APIs use ControlProps/closed semantic props. Effective typed checks cover inherited attributes, callers and child-injected internal spacing; shared native implementation owns concrete classes.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-no-nested-form",
+    "impact": "HIGH",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No authored application form element/form-submission flow; shared inputs are immediate scope controls.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-required-children",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Project UI composition uses nested children; scalar labels/text remain scalar props. Column renderers are named module-level external integration components; per-test Testing Library wrappers retain their allowed captured-client exception.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-semantic-colors",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Global CSS and shared/theme own concrete values; portfolioChartTones maps metrics to generic chart roles. Shared primitives use semantic tokens. Prepaint and React theme metadata share canonical token source.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-vercel-explicit-variants",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Mode flags represent actual open/selected/disabled state or closed visual/horizon variants; no incompatible create/edit/cancel workflow booleans. Current/history and value/share are variants within their capability.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-vercel-lazy-loading",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Seven route loaders use literal module imports, handled intent preloads and panel Suspense/error boundaries. Build outputs retain separate Overview/Wealth/Performance/Positions/LookThrough/Diversification/Quality chunks; required-source coordination remains eager.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-vercel-offscreen-content",
+    "impact": "MEDIUM-HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "ChartViewport waits for first intersection, reserves height, reveals for focus/printing and retains readiness. Exposure lists use virtualization. Existing measured scheduling choices retained; no indiscriminate containment added.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "ui-vercel-responsive-rendering",
+    "impact": "MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Retained Activity panels, header/panel memo boundaries, worker source validation, indexed issuer lookup and independent financial/disclosure memos reviewed. Earlier navigation fixes remain intact; no new production timing claim.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-form-schema-hook",
+    "impact": "MEDIUM",
+    "status": "not applicable",
+    "obligationsAndEvidence": "No translated editable-data form validation schema; date filter conversion uses generic message-free schema, not a form-submission workflow.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-last-coercion-barrier",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Schema/domain/caller review establishes one external-data conversion boundary. F-002: FundPositionHoldingRow replaces a legitimately unknown validated valuation with zero before displaying a derived amount, contradicting the source contract.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-module-level-schemas",
+    "impact": "LOW-MEDIUM",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "API schemas are named module constants; composed CSV array wrapper depends on the generic row schema at the transport boundary. No per-render response schema construction.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-no-cast-bypass",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Schema outputs assigned through ObjectSchema/Schema/domain return annotations. No cast of Yup output into an entity; documented DEBUG cast is Yup conversion, not a TypeScript assertion.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-no-oneof-on-display-enums",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Schemas constrain branching account/operation/quality states; descriptive source taxonomies use tolerant strings. Unknown display pipeline types preserve backend wording.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  },
+  {
+    "id": "yup-tolerant-response-schema",
+    "impact": "HIGH",
+    "status": "automatically checked; manually reviewed",
+    "obligationsAndEvidence": "Display text uses ensure/empty text; null arrays default at JSON boundaries; optional fund CSV missing 404 becomes empty. Required identifiers/calculation numbers and invalid calendar dates still fail.",
+    "limits": "Bounded configured checks plus the named semantic target family; not a proof of every possible runtime behavior. Existing exceptions are not technically reapproved."
+  }
+]

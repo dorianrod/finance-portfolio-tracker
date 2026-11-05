@@ -1,0 +1,51 @@
+{
+  "changedFiles": [
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.tsx",
+      "baselineSha256": "f62e6b9d32ddc8ff63c1bf92c34b61b43c29e87b6eab9e558064a46ce52d6a0f",
+      "sha256": "7145ff85eb1bae3ac49fedae87fe8b154a37fe78398626dca1636d6821da52a3"
+    },
+    {
+      "file": "src/i18n/locales/en.json",
+      "baselineSha256": "a19629e78bc5e923afb742c1b876388c2c6b62c93de58bb9142777160c9b9604",
+      "sha256": "61ab1def29bbb2adc68094013f92378695ef5b71625f57c2358fef8f4d0213c7"
+    },
+    {
+      "file": "tests/eslint/catalog-enforcement.integration.test.js",
+      "baselineSha256": "5a4ae2a1cac4c4ee572c1d71a06d4d114bb9997f3de931bdf2a0a4f7cf751573",
+      "sha256": "88c7288ddcdbc327e42eacdc8c32bc62724561676eaae4f0ba97cfc98172ac09"
+    },
+    {
+      "file": "tests/fixtures/ownership-review.json",
+      "baselineSha256": "6e4a9f131ab1afd9cbe7dc4ae8bfd893d09542a60d8437d35ef68ca7f5f7cc17",
+      "sha256": "24bdeabb69e1cf8214db6c728476020ed1fc5ad925df64252e4ed2d012fc9ea8"
+    }
+  ],
+  "addedFiles": [
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.test.tsx",
+      "sha256": "0c9cad9d0d9f7815fa79f0db66c2b99f551da71d4a95febfd29ad5778b7aad87",
+      "role": "test",
+      "obligations": [
+        "behavior regression including missing/zero/nonzero input",
+        "typed deterministic owning mocks",
+        "semantic content queries",
+        "no internal mocks",
+        "test/fixture review delta"
+      ]
+    }
+  ],
+  "additionalInputChanges": [
+    {
+      "file": "../../.github/workflows/ci.yml",
+      "sha256": "0dca5a76d7b4cb1d53cac40af903bbeb6b64b3bb8ad2b9b9ad1360f517bac313",
+      "change": "Adds only the existing catalog usage gate."
+    }
+  ],
+  "runtimeAdditions": [],
+  "moves": [],
+  "callerReview": "FundPositionPopover continues to supply PositionRow and FundHolding directly. Main position value cell and money formatter already preserve null; neither API nor shared UI contract changes.",
+  "sourceMutationBoundary": "Phase-1 reports completed before the permanent regression was added; red run failed only null case before source correction.",
+  "architectureDecisions": "No changed owner holds a structured architecture decision; existing scope/model/worker/panel/view choices preserved.",
+  "phase2RuleDelta": "Only a new test and a bounded CI check were introduced; no new business entity/state/helper/component/module responsibility."
+}

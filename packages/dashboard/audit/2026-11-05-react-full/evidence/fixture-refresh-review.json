@@ -1,0 +1,15 @@
+{
+  "changedSourceOwners": [
+    "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.tsx",
+    "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.test.tsx",
+    "src/i18n/locales/en.json"
+  ],
+  "unchangedCandidateCount": 25,
+  "unchangedCandidateKeys": true,
+  "unchangedReviewedTestHashes": true,
+  "unchangedContractsAndCompiler": true,
+  "newTestCandidates": [],
+  "newTestReview": "Typed parameter table of source-value/expected-label scenarios uses makePosition and makeFundHolding with Partial overrides; no independent entity defaults.",
+  "decision": "Retain all existing scenario/transport reasons; update only the source fingerprint after reviewing the null-propagation implementation and its sole new test.",
+  "consultedHistory": "ownership-review.json dd98339f; clean staged/unstaged content before this update."
+}
