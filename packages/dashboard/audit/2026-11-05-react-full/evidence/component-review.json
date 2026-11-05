@@ -1,0 +1,737 @@
+[
+  {
+    "file": "src/app/App.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardContent.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardDataQuality.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardDiversification.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardFilters.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardHoldings.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardPanel.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardPanelFallback.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardReliability.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardSectionHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DashboardSources.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/DiversificationViewToggle.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/HoldingsViewTabs.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/dashboardNavigation/DashboardNavigation.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/app/dashboardNavigation/PrimaryTabButton.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Application source/status, retained navigation or cross-capability composition; state subscriptions and named child features own their direct rendering.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionQuality.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummary.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/DataQualityTab.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/QualityAssessmentPage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/pages/ManualPriceOverrides.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/pages/PipelineErrors.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Quality assessment/inspection: source scoping, coverage/diagnostic computation, focused detail/navigation actions or composition of these features.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationCurrentView.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationTrendView.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/FilteredPositionsTable.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/pages/AllocationPage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/CurrentConcentration.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/HistoricalConcentration.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/pages/ConcentrationPage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Allocation/concentration scope, grouping, selection or composition; dedicated chart views/presenters own independent presentation.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Exposure eligibility/aggregation, query/disclosure/virtualization model or composition of the fund exploration workflow.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Exposure eligibility/aggregation, query/disclosure/virtualization model or composition of the fund exploration workflow.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/pages/FundLookThroughPage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Exposure eligibility/aggregation, query/disclosure/virtualization model or composition of the fund exploration workflow.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Derive the monetary underlying holding exposure from the supplied position and weight; F-002 preserves unknown source valuations.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": ["F-002"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/FundPositionPopover.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Support registry, not a component: external TanStack column configuration references named module-level cell/header components.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/gainCells/UnrealizedGainCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionRealizedCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionUnrealizedCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionDividendsHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionRealizedHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionTotalRealizedHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionTotalReturnPctHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionUnrealizedHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionValueHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionXirrHeader.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/pages/PositionsPage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Position row classification, financial/tax derivation, sorting, preview action or source/history acquisition; direct row/cell markup stays tightly coupled.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/EmptyChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Comparison availability, selected concentration mode, chart model or metric navigation; common card/chart visual contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetContributionsKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetPortfolioValueKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetUnrealizedKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/TotalNetPerformanceKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformancePage.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Return/contribution scope, horizon, availability, rankings or live reporting-scope composition; independent result/chart contracts are already views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Account/operation/period selection or focused filter actions; local open/sort/filter state feeds a direct control/view boundary.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Account/operation/period selection or focused filter actions; local open/sort/filter state feeds a direct control/view boundary.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Account/operation/period selection or focused filter actions; local open/sort/filter state feeds a direct control/view boundary.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/FilterButton.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Account/operation/period selection or focused filter actions; local open/sort/filter state feeds a direct control/view boundary.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/FilterPanel.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Account/operation/period selection or focused filter actions; local open/sort/filter state feeds a direct control/view boundary.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/pages/WealthTab.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Wealth reporting source/model acquisition or domain metric/tooltip grouping before rendering independent chart views.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Shared portfolio reporting-scope acquisition or composition of the source-aware scope feature; generic UI remains independent.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature.tsx",
+    "decision": "keep existing boundary",
+    "businessResponsibility": "Shared portfolio reporting-scope acquisition or composition of the source-aware scope feature; generic UI remains independent.",
+    "presentationDecision": "Existing view/primitive contracts retained; an extra mirror view would add no independent responsibility. Larger workflow composition remains feature-owned.",
+    "findings": []
+  }
+]

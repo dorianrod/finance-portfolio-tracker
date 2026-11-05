@@ -57,6 +57,9 @@ jobs:
       - name: Check formatting and lint
         run: npm run format:check
 
+      - name: Check translation catalog usage
+        run: npm run audit:i18n
+
       - name: Check fixture ownership reviews
         run: npm run audit:fixtures:check
 

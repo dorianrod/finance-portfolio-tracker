@@ -18,16 +18,16 @@ const cases = [
     file: feature,
     message: 'featureWithoutBusiness',
     invalid:
-      "import text from '@/i18n/i18n'; const label = text.t; export function Field({value}: {value: string}) {return <span>{Boolean(value) ? label('ui.app.loading') : null}</span>}",
+      "import text from '@/i18n/i18n'; const label = text.t; export function Field({value}: {value: string}) {return <span>{Boolean(value) ? label('ui.app.loadingAnalysis') : null}</span>}",
     valid:
-      "import text from '@/i18n/i18n'; import {useAtomValue} from 'jotai'; import {dashboardFiltersOpenAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'; export function Field() {const open = useAtomValue(dashboardFiltersOpenAtom);return <span>{open ? text.t('ui.app.loading') : null}</span>}",
+      "import text from '@/i18n/i18n'; import {useAtomValue} from 'jotai'; import {dashboardFiltersOpenAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'; export function Field() {const open = useAtomValue(dashboardFiltersOpenAtom);return <span>{open ? text.t('ui.app.loadingAnalysis') : null}</span>}",
   },
   {
     rule: 'component-role',
     file: feature,
     message: 'featureWithoutBusiness',
     invalid:
-      "import {useTranslation} from 'react-i18next'; export function Field() {const {t: label} = useTranslation();return <span>{label('ui.app.loading')}</span>}",
+      "import {useTranslation} from 'react-i18next'; export function Field() {const {t: label} = useTranslation();return <span>{label('ui.app.loadingAnalysis')}</span>}",
     valid:
       'export function Field({Boolean}: {Boolean: () => string}) {return <span>{Boolean()}</span>}',
   },
@@ -53,9 +53,9 @@ const cases = [
     rule: 'i18n-consistency',
     message: 'defaultValue',
     invalid:
-      "import text from '@/i18n/i18n'; export function Field() {return <span>{text.t('ui.app.loading', {defaultValue: 'Loading'})}</span>}",
+      "import text from '@/i18n/i18n'; export function Field() {return <span>{text.t('ui.app.loadingAnalysis', {defaultValue: 'Loading'})}</span>}",
     valid:
-      "import text from '@/i18n/i18n'; export function Field() {return <span>{text.t('ui.app.loading')}</span>}",
+      "import text from '@/i18n/i18n'; export function Field() {return <span>{text.t('ui.app.loadingAnalysis')}</span>}",
   },
   {
     rule: 'max-hooks-per-component',

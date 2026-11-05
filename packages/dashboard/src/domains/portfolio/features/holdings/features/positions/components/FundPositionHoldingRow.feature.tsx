@@ -15,7 +15,8 @@ export function FundPositionHoldingRow({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const positionValue = position.total_value ?? 0
+  const holdingValue =
+    position.total_value == null ? null : position.total_value * holding.weight
   return (
     <Surface variant="mutedRowSeparator">
       <Grid
@@ -31,7 +32,7 @@ export function FundPositionHoldingRow({
           {formatPercentage(holding.weight * 100, { decimals: 2 })}
         </Text>
         <Text tone="muted" align="right" numeric>
-          {formatMoney(positionValue * holding.weight, { style: 'full' })}
+          {formatMoney(holdingValue, { style: 'full' })}
         </Text>
       </Grid>
     </Surface>
